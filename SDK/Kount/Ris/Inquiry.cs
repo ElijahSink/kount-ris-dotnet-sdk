@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------
-// <copyright file="Inquiry.cs" company="Keynetics Inc">
-//     Copyright Keynetics. All rights reserved.
+// <copyright file="Inquiry.cs" company="Equifax Inc">
+//     Copyright 2025 Equifax. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 namespace Kount.Ris
@@ -8,6 +8,9 @@ namespace Kount.Ris
     using KountRisSdk.Kount.Log.Factory;
     using Microsoft.Extensions.Logging;
     using System;
+    using System.Net.Http;
+    using Kount.Ris.Authentication;
+    using Microsoft.Extensions.Http;
 
     /// <summary>
     /// Inquiry class. A bunch of setters for sending initial transaction
@@ -61,6 +64,96 @@ namespace Kount.Ris
         /// <param name="configuration">Configuration class with raw values</param>
         /// <param name="logger">ILogger compatible logger</param>
         public Inquiry(bool checkConfiguration, Configuration configuration, ILogger logger = null) : base(checkConfiguration, configuration, logger)
+        {
+            this.SetMode(Enums.InquiryTypes.ModeQ);
+            this.SetCurrency("USD");
+            this.Data["SDK"] = Config.SDK;
+            this.Data["SDK_VERSION"] = Config.SDK_NAME;
+        }
+
+        /// <summary>
+        /// Constructor with authentication provider for dependency injection.
+        /// Sets the mode to 'Q', the currency to 'USD' and sets the SDK identifier value.
+        /// </summary>
+        /// <param name="authenticationProvider">Authentication provider for handling tokens</param>
+        /// <param name="logger">ILogger compatible logger</param>
+        public Inquiry(IAuthenticationProvider authenticationProvider, ILogger logger = null) 
+            : base(true, Configuration.FromAppSettings(), authenticationProvider, logger)
+        {
+            this.SetMode(Enums.InquiryTypes.ModeQ);
+            this.SetCurrency("USD");
+            this.Data["SDK"] = Config.SDK;
+            this.Data["SDK_VERSION"] = Config.SDK_NAME;
+        }
+
+        /// <summary>
+        /// Constructor with configuration and authentication provider for dependency injection.
+        /// Sets the mode to 'Q', the currency to 'USD' and sets the SDK identifier value.
+        /// </summary>
+        /// <param name="checkConfiguration">If is true: will check config file if 
+        /// `Ris.Url`, `Ris.MerchantId`, `Ris.Config.Key` and 
+        /// `Ris.Connect.Timeout` are set.</param>
+        /// <param name="configuration">Configuration class with raw values</param>
+        /// <param name="authenticationProvider">Authentication provider for handling tokens</param>
+        /// <param name="logger">ILogger compatible logger</param>
+        public Inquiry(bool checkConfiguration, Configuration configuration, 
+                       IAuthenticationProvider authenticationProvider, ILogger logger = null) 
+            : base(checkConfiguration, configuration, authenticationProvider, logger)
+        {
+            this.SetMode(Enums.InquiryTypes.ModeQ);
+            this.SetCurrency("USD");
+            this.Data["SDK"] = Config.SDK;
+            this.Data["SDK_VERSION"] = Config.SDK_NAME;
+        }
+
+        /// <summary>
+        /// Constructor with IHttpClientFactory for dependency injection scenarios.
+        /// Sets the mode to 'Q', the currency to 'USD' and sets the SDK identifier value.
+        /// Enables proper HttpClient lifecycle management and connection pooling.
+        /// </summary>
+        /// <param name="httpClientFactory">HttpClient factory for creating clients with proper lifecycle management</param>
+        /// <param name="logger">ILogger compatible logger</param>
+        public Inquiry(IHttpClientFactory httpClientFactory, ILogger logger = null) 
+            : base(true, Configuration.FromAppSettings(), null, httpClientFactory, logger)
+        {
+            this.SetMode(Enums.InquiryTypes.ModeQ);
+            this.SetCurrency("USD");
+            this.Data["SDK"] = Config.SDK;
+            this.Data["SDK_VERSION"] = Config.SDK_NAME;
+        }
+
+        /// <summary>
+        /// Constructor with configuration and IHttpClientFactory for dependency injection scenarios.
+        /// Sets the mode to 'Q', the currency to 'USD' and sets the SDK identifier value.
+        /// Enables proper HttpClient lifecycle management and connection pooling.
+        /// </summary>
+        /// <param name="configuration">Configuration class with raw values</param>
+        /// <param name="httpClientFactory">HttpClient factory for creating clients with proper lifecycle management</param>
+        /// <param name="logger">ILogger compatible logger</param>
+        public Inquiry(Configuration configuration, IHttpClientFactory httpClientFactory, ILogger logger = null) 
+            : base(true, configuration, null, httpClientFactory, logger)
+        {
+            this.SetMode(Enums.InquiryTypes.ModeQ);
+            this.SetCurrency("USD");
+            this.Data["SDK"] = Config.SDK;
+            this.Data["SDK_VERSION"] = Config.SDK_NAME;
+        }
+
+        /// <summary>
+        /// Constructor with configuration, authentication provider, and IHttpClientFactory for full dependency injection control.
+        /// Sets the mode to 'Q', the currency to 'USD' and sets the SDK identifier value.
+        /// </summary>
+        /// <param name="checkConfiguration">If is true: will check config file if 
+        /// `Ris.Url`, `Ris.MerchantId`, `Ris.Config.Key` and 
+        /// `Ris.Connect.Timeout` are set.</param>
+        /// <param name="configuration">Configuration class with raw values</param>
+        /// <param name="authenticationProvider">Authentication provider for handling tokens</param>
+        /// <param name="httpClientFactory">HttpClient factory for creating clients with proper lifecycle management</param>
+        /// <param name="logger">ILogger compatible logger</param>
+        public Inquiry(bool checkConfiguration, Configuration configuration, 
+                       IAuthenticationProvider authenticationProvider, 
+                       IHttpClientFactory httpClientFactory, ILogger logger = null) 
+            : base(checkConfiguration, configuration, authenticationProvider, httpClientFactory, logger)
         {
             this.SetMode(Enums.InquiryTypes.ModeQ);
             this.SetCurrency("USD");
