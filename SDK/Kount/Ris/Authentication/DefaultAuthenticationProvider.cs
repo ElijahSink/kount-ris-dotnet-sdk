@@ -29,6 +29,12 @@ namespace KountRisSdk.Kount.Ris.Authentication
         private BearerAuthResponse _cachedToken;
         private DateTimeOffset _tokenExpiration;
 
+        /// <summary>
+        /// Initializes a new instance of DefaultAuthenticationProvider with static HttpClient.
+        /// </summary>
+        /// <param name="authUrl">The authentication endpoint URL</param>
+        /// <param name="apiKey">The API key for authentication</param>
+        /// <param name="httpClient">Optional HttpClient instance for testing. If null, creates a new one.</param>
         public DefaultAuthenticationProvider(string authUrl, string apiKey, HttpClient httpClient = null)
         {
             _authUrl = authUrl ?? throw new ArgumentNullException(nameof(authUrl));
@@ -39,6 +45,12 @@ namespace KountRisSdk.Kount.Ris.Authentication
             _tokenExpiration = DateTimeOffset.MinValue;
         }
 
+        /// <summary>
+        /// Initializes a new instance of DefaultAuthenticationProvider with IHttpClientFactory.
+        /// </summary>
+        /// <param name="authUrl">The authentication endpoint URL</param>
+        /// <param name="apiKey">The API key for authentication</param>
+        /// <param name="httpClientFactory">HttpClient factory for creating clients with proper lifecycle management</param>
         public DefaultAuthenticationProvider(string authUrl, string apiKey, IHttpClientFactory httpClientFactory)
         {
             _authUrl = authUrl ?? throw new ArgumentNullException(nameof(authUrl));
@@ -49,6 +61,11 @@ namespace KountRisSdk.Kount.Ris.Authentication
             _tokenExpiration = DateTimeOffset.MinValue;
         }
 
+        /// <summary>
+        /// Gets the authentication headers needed for API requests.
+        /// </summary>
+        /// <param name="forceRefresh">If true, forces a token refresh even if current token is valid</param>
+        /// <returns>AuthResult containing either success with headers or failure with error message</returns>
         public AuthResult GetAuthenticationHeaders(bool forceRefresh = false)
         {
             lock (_lock)
@@ -69,6 +86,9 @@ namespace KountRisSdk.Kount.Ris.Authentication
             }
         }
 
+        /// <summary>
+        /// Invalidates the current cached token, forcing a refresh on the next request.
+        /// </summary>
         public void InvalidateToken()
         {
             lock (_lock)
@@ -144,6 +164,9 @@ namespace KountRisSdk.Kount.Ris.Authentication
             }
         }
 
+        /// <summary>
+        /// Disposes resources used by the authentication provider.
+        /// </summary>
         public void Dispose()
         {
             if (_ownsStaticClient) _staticHttpClient?.Dispose();
